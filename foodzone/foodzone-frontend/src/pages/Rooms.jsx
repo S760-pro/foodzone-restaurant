@@ -5,6 +5,7 @@ import {
   Star, Check, ArrowRight, Sparkles, Crown, Bed, Shield, Gift, Tag, Award, ChevronRight
 } from "lucide-react";
 import { SiteCard, SiteCardsGrid } from "../components/SiteCard";
+import { roomAPI } from "../services/api";
 
 const roomTypes = [
   {
@@ -128,8 +129,7 @@ export default function Rooms() {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/rooms');
-        const data = await response.json();
+        const data = await roomAPI.getAll();
         
         // Transform backend data to match frontend structure
         const transformedRooms = data.map(room => ({

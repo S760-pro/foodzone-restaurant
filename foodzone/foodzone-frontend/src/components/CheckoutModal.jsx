@@ -22,8 +22,18 @@ export default function CheckoutModal() {
 
   const handlePayment = (e) => {
     e.preventDefault();
-    if (!formData.fullName || !formData.email || !formData.phone || !formData.address || !formData.cardNumber) {
-      alert("Please fill all fields");
+    const requiredFields = [
+      formData.fullName,
+      formData.email,
+      formData.phone,
+      formData.address,
+      formData.cardNumber,
+      formData.cardExpiry,
+      formData.cardCVV,
+    ];
+
+    if (requiredFields.some((field) => !field.trim())) {
+      alert("Please fill all payment fields before continuing.");
       return;
     }
     // Simulate payment processing
@@ -40,7 +50,7 @@ export default function CheckoutModal() {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
       <div 
-        className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+        className="checkout-modal-card bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
         style={{
           backgroundImage: `linear-gradient(135deg, rgba(255, 255, 255, 0.94) 0%, rgba(255, 255, 255, 0.92) 100%), url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&q=60')`,
           backgroundPosition: 'right bottom',
@@ -129,7 +139,7 @@ export default function CheckoutModal() {
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex gap-5">
+                  <div className="checkout-action-buttons flex gap-5">
                     <button
                       onClick={() => setShowCheckout(false)}
                       className="flex-1 px-8 py-5 border-2 border-orange-400 rounded-2xl font-bold text-orange-600 hover:bg-orange-50 transition text-lg shadow-md hover:shadow-lg"

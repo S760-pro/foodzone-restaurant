@@ -36,7 +36,7 @@ export default function Navbar() {
           </Link>
 
           {/* Center: Desktop Nav Links */}
-          <nav className="hidden md:flex items-center gap-10 absolute left-1/2 transform -translate-x-1/2">
+          <nav className="hidden lg:flex items-center gap-6 xl:gap-10 absolute left-1/2 transform -translate-x-1/2">
             {links.map((l) => (
               <Link key={l.name} to={l.to}
                 className="text-gray-700 hover:text-orange-500 px-4 py-2 rounded-lg transition-all text-[16px] font-semibold">
@@ -46,12 +46,18 @@ export default function Navbar() {
           </nav>
 
           {/* Right: Desktop Auth */}
-          <div className="hidden md:flex items-center gap-5">
+          <div className="hidden lg:flex items-center gap-4 xl:gap-5">
             {user ? (
               <>
                 <span className="text-gray-700 text-[15px] font-medium">
                   Hi, {user.name?.split(" ")[0]}
                 </span>
+                <Link
+                  to="/dashboard"
+                  className="nav-dashboard-button px-5 py-2.5 rounded-lg text-[15px] font-bold"
+                >
+                  Dashboard
+                </Link>
                 <button onClick={handleLogout}
                   className="px-5 py-2.5 border border-orange-500 text-orange-500 rounded-md text-[15px] font-bold hover:bg-orange-500 hover:text-white transition-colors cursor-pointer">
                   LOGOUT
@@ -64,7 +70,7 @@ export default function Navbar() {
                   Login
                 </Link>
                 <Link to="/register"
-                  className="px-5 py-2.5 border border-orange-500 text-orange-500 rounded-md text-[15px] font-bold hover:bg-orange-500 hover:text-white transition-colors">
+                  className="nav-book-button px-6 py-3 border border-orange-500 text-orange-500 rounded-lg text-[15px] font-bold hover:bg-orange-500 hover:text-white transition-all">
                   Book Now
                 </Link>
               </>
@@ -72,7 +78,7 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Toggle */}
-          <button className="md:hidden text-gray-700 p-2 rounded focus-ring" onClick={() => setOpen(!open)} aria-label="Toggle menu">
+          <button className="lg:hidden text-gray-700 p-2 rounded focus-ring" onClick={() => setOpen(!open)} aria-label="Toggle menu">
             {open ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
@@ -80,7 +86,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {open && (
-        <div className="md:hidden px-6 py-4 flex flex-col gap-4 border-t border-gray-200" style={{ backgroundColor: 'var(--background-color)' }}>
+        <div className="lg:hidden px-6 py-4 flex flex-col gap-4 border-t border-gray-200" style={{ backgroundColor: 'var(--background-color)' }}>
           {links.map((l) => (
             <Link key={l.name} to={l.to}
               className="text-gray-700 text-[16px] font-medium hover:text-orange-500 transition-colors"
@@ -90,7 +96,7 @@ export default function Navbar() {
           ))}
           {user ? (
             <>
-              <Link to="/dashboard" className="text-gray-700 text-[16px]" onClick={() => setOpen(false)}>
+              <Link to="/dashboard" className="nav-dashboard-button w-fit px-4 py-2 rounded-lg text-[16px] font-bold" onClick={() => setOpen(false)}>
                 Dashboard
               </Link>
               <button onClick={handleLogout} className="px-5 py-2.5 border border-orange-500 text-orange-500 rounded-md text-[15px] font-bold hover:bg-orange-500 hover:text-white transition-colors w-fit">

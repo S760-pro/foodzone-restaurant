@@ -32,58 +32,44 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      
-      {/* Background Image */}
+    <div className="auth-shell auth-login min-h-screen relative overflow-hidden">
       <div className="absolute inset-0">
         <img
           src="https://images.unsplash.com/photo-1552566626-52f8b828add9?w=1920&q=80"
           alt="Restaurant"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-black/50 via-black/40 to-black/60"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-black/55 via-black/45 to-black/65"></div>
       </div>
 
-      {/* Content */}
-      <div className="relative min-h-screen flex items-center justify-center p-4 sm:p-8">
-        
-        {/* Login Card */}
-        <div className="w-full max-w-2xl">
-          <div className="bg-white rounded-3xl shadow-2xl overflow-hidden"
-            style={{ boxShadow: "0 25px 70px rgba(0,0,0,0.4)" }}>
-          
-            {/* Header with Logo and Title */}
-            <div className="bg-gradient-to-r from-orange-500 to-orange-600 px-8 py-12 relative overflow-hidden">
-              {/* Decorative circles */}
+      <div className="relative min-h-screen flex items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
+        <div className="w-full max-w-xl auth-card">
+          <div className="auth-surface bg-white rounded-[28px] shadow-[0_24px_70px_rgba(17,24,39,0.22)] border border-white/80 overflow-hidden transition-all duration-300 hover:shadow-[0_30px_85px_rgba(17,24,39,0.28)]">
+            <div className="auth-header px-8 py-9 sm:px-12 sm:py-11 relative overflow-hidden ring-1 ring-orange-100 ring-inset">
               <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
               <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24"></div>
-              
-              <div className="relative flex items-center gap-6">
-                {/* Logo Container */}
-                <div className="w-28 h-28 bg-white rounded-3xl flex items-center justify-center shadow-xl flex-shrink-0">
-                  <img src={logo} alt="Food Zone" className="w-20 h-20 object-contain" />
+
+              <div className="relative flex flex-col items-center gap-4 text-center">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 bg-orange-50 rounded-full flex items-center justify-center shadow-lg flex-shrink-0 ring-4 ring-orange-100">
+                  <img src={logo} alt="Food Zone" className="w-12 h-12 sm:w-16 sm:h-16 object-contain" />
                 </div>
-                
-                {/* Title */}
+
                 <div className="flex-1 text-center">
-                  <h1 className="text-5xl font-bold text-white mb-2">Sign In</h1>
-                  <p className="text-white/90 text-lg">Welcome back to Food Zone</p>
+                  <h1 className="auth-title text-4xl sm:text-5xl font-black text-gray-900 leading-none mb-3 tracking-[-0.03em]">Sign In</h1>
+                  <p className="text-gray-500 text-base sm:text-lg font-medium">Welcome back to Food Zone</p>
                 </div>
               </div>
             </div>
 
-            {/* Form Body */}
-            <div className="px-12 py-12">
-              
-              {/* Role Selection */}
+            <div className="auth-form-panel px-7 py-8 sm:px-12 sm:py-10 lg:px-14 lg:py-12">
               <div className="mb-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex items-center gap-2.5 mb-4 pl-2 text-orange-600">
+                  <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
-                  <label className="text-base font-bold text-gray-800">Select Role</label>
+                  <label className="text-lg font-bold text-gray-800">Select Role</label>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4 pl-2 pr-2">
                   {[
                     { value: "guest", label: "Guest", icon: "👤" },
                     { value: "admin", label: "Admin", icon: "🛡️" },
@@ -92,10 +78,10 @@ export default function Login() {
                       key={r.value}
                       type="button"
                       onClick={() => setForm({ ...form, role: r.value })}
-                      className={`py-4 px-6 rounded-2xl font-bold text-base transition-all duration-300 flex items-center justify-center gap-2 ${
+                      className={`py-4 px-6 rounded-2xl font-bold text-lg transition-all duration-300 flex items-center justify-center gap-2 border border-orange-200 ${
                         form.role === r.value
-                          ? "bg-orange-500 text-white shadow-lg"
-                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                          ? "bg-white text-orange-600 shadow-lg scale-[1.01]"
+                          : "bg-orange-50 text-orange-700 hover:bg-orange-100"
                       }`}
                     >
                       <span className="text-xl">{r.icon}</span>
@@ -106,14 +92,12 @@ export default function Login() {
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-5">
-                
-                {/* Email */}
                 <div>
-                  <div className="flex items-center gap-2 mb-3">
-                    <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="flex items-center gap-2.5 mb-3 pl-2 text-orange-600">
+                    <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
-                    <label className="text-base font-bold text-gray-800">Email Address</label>
+                    <label className="text-lg font-bold text-gray-800">Email Address</label>
                   </div>
                   <input
                     type="email"
@@ -122,17 +106,16 @@ export default function Login() {
                     onChange={handleChange}
                     required
                     placeholder="cheemafaraz@gmail.com"
-                    className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-2xl text-gray-900 text-base placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
+                    className="w-full px-5 py-4 bg-white/95 border-2 border-white rounded-2xl text-gray-900 text-base sm:text-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white focus:border-white transition-all shadow-sm"
                   />
                 </div>
 
-                {/* Password */}
                 <div>
-                  <div className="flex items-center gap-2 mb-3">
-                    <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="flex items-center gap-2.5 mb-3 pl-2 text-white">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
-                    <label className="text-base font-bold text-gray-800">Password</label>
+                    <label className="text-lg font-bold text-white">Password</label>
                   </div>
                   <div className="relative">
                     <input
@@ -142,31 +125,29 @@ export default function Login() {
                       onChange={handleChange}
                       required
                       placeholder="••••••••"
-                      className="w-full px-5 py-4 pr-14 bg-gray-50 border-2 border-gray-200 rounded-2xl text-gray-900 text-base placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
+                      className="w-full px-5 py-4 pr-14 bg-white/95 border-2 border-white rounded-2xl text-gray-900 text-base sm:text-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white focus:border-white transition-all shadow-sm"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-500 transition-colors"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-orange-600 transition-colors"
                     >
                       {showPassword ? <EyeOff size={22} /> : <Eye size={22} />}
                     </button>
                   </div>
                 </div>
 
-                {/* Error */}
                 {error && (
-                  <div className="flex items-center gap-3 p-4 bg-red-50 border-2 border-red-200 rounded-2xl">
+                  <div className="flex items-center gap-3 p-4 bg-red-50 border-2 border-red-200 rounded-2xl text-red-600">
                     <div className="w-2 h-2 rounded-full bg-red-500"></div>
-                    <p className="text-red-600 text-sm font-semibold">{error}</p>
+                    <p className="text-sm sm:text-base font-semibold">{error}</p>
                   </div>
                 )}
 
-                {/* Submit Button */}
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-5 rounded-2xl font-bold text-lg hover:from-orange-600 hover:to-orange-700 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="login-vip-button w-full bg-white text-orange-600 rounded-2xl font-bold text-lg disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
@@ -174,21 +155,16 @@ export default function Login() {
                   {loading ? "Signing In..." : "Sign In →"}
                 </button>
 
-                {/* Divider */}
-                <div className="relative my-6">
+                <div className="relative my-5 text-center text-white/90">
                   <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t-2 border-gray-200"></div>
+                    <div className="w-full border-t border-white/40"></div>
                   </div>
-                  <div className="relative flex justify-center text-base">
-                    <span className="px-4 bg-white text-gray-500 font-semibold">or</span>
-                  </div>
+                  <div className="relative inline-block bg-transparent px-3 text-base font-medium">or</div>
                 </div>
 
-                {/* Sign Up Link */}
                 <Link
                   to="/register"
-                  className="block w-full text-center py-5 border-3 border-orange-500 text-orange-500 rounded-2xl font-bold text-lg hover:bg-orange-50 transition-all duration-300 flex items-center justify-center gap-2"
-                  style={{ borderWidth: '3px' }}
+                  className="block w-full text-center py-4 border-2 border-white/80 text-white rounded-2xl font-bold text-lg hover:bg-white/10 transition-all duration-300 flex items-center justify-center gap-2"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
@@ -197,8 +173,7 @@ export default function Login() {
                 </Link>
               </form>
 
-              {/* Footer */}
-              <p className="text-center text-gray-500 text-sm font-semibold mt-6">
+              <p className="text-center text-white/70 text-sm font-medium mt-6">
                 Powered by Food Zone
               </p>
             </div>

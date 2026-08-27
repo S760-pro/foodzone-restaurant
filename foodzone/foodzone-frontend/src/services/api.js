@@ -16,8 +16,17 @@ const request = async (endpoint, options = {}) => {
     headers: authHeaders(),
     ...options,
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.message || "Something went wrong");
+
+  const contentType = res.headers.get("content-type") || "";
+  const data = contentType.includes("application/json")
+    ? await res.json()
+    : await res.text();
+
+  if (!res.ok) {
+    const message = typeof data === "string" ? data : data?.message || "Something went wrong";
+    throw new Error(message);
+  }
+
   return data;
 };
 

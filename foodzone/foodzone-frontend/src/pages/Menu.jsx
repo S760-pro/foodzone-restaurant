@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { SiteCard, SiteCardsGrid, SiteStatCard } from "../components/SiteCard";
 import { useCart } from "../context/CartContext";
+import { menuAPI } from "../services/api";
 
 const menuCategories = [
   {
@@ -238,8 +239,7 @@ export default function Menu() {
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/menu');
-        const data = await response.json();
+        const data = await menuAPI.getAll();
         setBackendMenuItems(data);
         setLoading(false);
       } catch (error) {
@@ -266,7 +266,7 @@ export default function Menu() {
     window.localStorage.setItem("foodzone-menu-favorites", JSON.stringify(favorites));
   }, [favorites]);
 
-  const allItems = menuCategories.flatMap((category) =>
+  const fallbackItems = menuCategories.flatMap((category) =>
     category.items.map((item) => ({
       ...item,
       categoryId: category.id,
@@ -274,10 +274,28 @@ export default function Menu() {
       categoryIcon: category.icon,
     }))
   );
+
+  const allItems = backendMenuItems.length
+    ? backendMenuItems.map((item) => ({
+        id: item._id,
+        name: item.name,
+        desc: item.description || "Freshly prepared by our chefs",
+        price: item.price,
+        priceLabel: `Rs. ${item.price.toLocaleString()}`,
+        img: item.image,
+        categoryId: item.category,
+        categoryName: item.category,
+        categoryIcon: "🍽️",
+        popular: item.isAvailable,
+        vegetarian: false,
+        spicy: false,
+        prepTime: "15 min",
+      }))
+    : fallbackItems;
   
   const activeCategoryData = activeCategory === "all"
     ? { items: allItems }
-    : menuCategories.find(category => category.id === activeCategory);
+    : { items: allItems.filter((item) => item.categoryId === activeCategory) };
 
   // Filter items based on search
   const filteredItems = activeCategoryData.items.filter(item =>
@@ -286,14 +304,11 @@ export default function Menu() {
   );
 
   // Calculate total menu stats
-  const totalItems = menuCategories.reduce((sum, cat) => sum + cat.items.length, 0);
-  const popularItems = menuCategories.reduce((sum, cat) => 
-    sum + cat.items.filter(item => item.popular).length, 0
-  );
+  const totalItems = allItems.length;
+  const popularItems = allItems.filter((item) => item.popular).length;
+  const categoryCount = new Set(allItems.map((item) => item.categoryId)).size;
   const avgPrice = Math.round(
-    menuCategories.reduce((sum, cat) => 
-      sum + cat.items.reduce((s, item) => s + item.price, 0), 0
-    ) / totalItems
+    allItems.reduce((sum, item) => sum + item.price, 0) / totalItems
   );
   const happyCustomers = 1000;
 
@@ -330,7 +345,7 @@ export default function Menu() {
         <SiteCardsGrid columns={5} className="menu-stats-grid" style={{ marginBottom: "60px" }}>
           <SiteStatCard icon={UtensilsCrossed} value={totalItems} label="Total Dishes" />
           <SiteStatCard icon={TrendingUp} iconWrapClass="site-card-icon-wrap--emerald" value={popularItems} label="Popular Items" />
-          <SiteStatCard icon={Award} iconWrapClass="site-card-icon-wrap--blue" value={menuCategories.length} label="Categories" />
+          <SiteStatCard icon={Award} iconWrapClass="site-card-icon-wrap--blue" value={categoryCount} label="Categories" />
           <SiteStatCard icon={Star} iconWrapClass="site-card-icon-wrap--amber" value={`Rs. ${avgPrice}`} label="Avg Price" />
           <SiteStatCard icon={Heart} iconWrapClass="site-card-icon-wrap--rose" value={`${happyCustomers.toLocaleString()}+`} label="Happy Customers" />
         </SiteCardsGrid>
@@ -340,6 +355,7 @@ export default function Menu() {
           <div className="flex flex-wrap justify-center gap-3 menu-category-tabs">
             {[
               { id: "all", name: "All Items", icon: UtensilsCrossed },
+                { id: "appetizers", name: "Appetizers", icon: UtensilsCrossed },
               { id: "mains", name: "Main Course", icon: UtensilsCrossed },
               { id: "desserts", name: "Desserts", icon: UtensilsCrossed },
               { id: "beverages", name: "Beverages", icon: UtensilsCrossed },
@@ -467,14 +483,14 @@ export default function Menu() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 menu-cta-actions">
               <Link 
                 to="/reservations" 
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-white text-orange-600 font-bold hover:shadow-2xl transition-all"
+                className="menu-vip-button menu-vip-primary inline-flex items-center gap-2 rounded-xl bg-white text-orange-600 font-bold"
               >
                 Reserve a Table
                 <ArrowRight size={18} />
               </Link>
               <Link 
                 to="/contact" 
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl border-2 border-white/60 text-white font-semibold hover:bg-white/10 transition-all"
+                className="menu-vip-button menu-vip-secondary inline-flex items-center gap-2 rounded-xl border-2 border-white/60 text-white font-semibold"
               >
                 Contact Us
                 <ChevronRight size={18} />

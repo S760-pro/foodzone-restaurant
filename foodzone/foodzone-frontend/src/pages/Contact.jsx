@@ -11,6 +11,8 @@ export default function Contact() {
     subject: "",
     message: ""
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setFormData({
@@ -128,24 +130,27 @@ export default function Contact() {
       ═══════════════════════════════════════ */}
       <section style={{ paddingBottom: '100px' }}>
         <div className="section-container">
-          <div className="grid lg:grid-cols-2 gap-10 items-start">
+          <div className="grid lg:grid-cols-2 gap-14 items-start">
             
             {/* Left Side - Contact Form */}
-            <div className="site-card site-card--panel">
-              <div className="site-card-body" style={{ padding: "40px 32px" }}>
-              <div className="mb-8">
-                <h2 className="text-3xl font-bold text-gray-900 mb-3" style={{ fontWeight: '700' }}>
+            <div className="contact-form-card site-card site-card--panel">
+              <div className="contact-form-header">
+                <div className="contact-form-icon">
+                  <MessageSquare size={28} className="text-orange-600" />
+                </div>
+                <h2 className="text-4xl font-bold text-gray-900">
                   Send Us a <span className="text-orange-500">Message</span>
                 </h2>
-                <p className="text-gray-600 text-sm">
-                  Fill out the form below and we'll get back to you as soon as possible.
+                <p className="text-gray-600 text-base">
+                  Fill out the form below and we'll get back to you soon.
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="site-card-body">
+              <form onSubmit={handleSubmit} className="contact-message-form space-y-7">
                 {/* Name Input */}
                 <div>
-                  <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label htmlFor="name" className="block text-lg font-semibold text-gray-700 mb-2">
                     Your Name *
                   </label>
                   <div className="relative">
@@ -158,14 +163,14 @@ export default function Contact() {
                       onChange={handleChange}
                       required
                       placeholder="Enter your full name"
-                      className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all text-gray-900 placeholder-gray-400"
+                      className="contact-form-input w-full pl-12 pr-4 py-3.5 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all text-lg text-gray-900 placeholder-gray-400"
                     />
                   </div>
                 </div>
 
                 {/* Email Input */}
                 <div>
-                  <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label htmlFor="email" className="block text-lg font-semibold text-gray-700 mb-2">
                     Email Address *
                   </label>
                   <div className="relative">
@@ -178,14 +183,14 @@ export default function Contact() {
                       onChange={handleChange}
                       required
                       placeholder="your.email@example.com"
-                      className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all text-gray-900 placeholder-gray-400"
+                      className="contact-form-input w-full pl-12 pr-4 py-3.5 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all text-lg text-gray-900 placeholder-gray-400"
                     />
                   </div>
                 </div>
 
                 {/* Phone Input */}
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label htmlFor="phone" className="block text-lg font-semibold text-gray-700 mb-2">
                     Phone Number
                   </label>
                   <div className="relative">
@@ -197,14 +202,14 @@ export default function Contact() {
                       value={formData.phone}
                       onChange={handleChange}
                       placeholder="+92 300 0000000"
-                      className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all text-gray-900 placeholder-gray-400"
+                      className="contact-form-input w-full pl-12 pr-4 py-3.5 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all text-lg text-gray-900 placeholder-gray-400"
                     />
                   </div>
                 </div>
 
                 {/* Subject Input */}
                 <div>
-                  <label htmlFor="subject" className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label htmlFor="subject" className="block text-lg font-semibold text-gray-700 mb-2">
                     Subject *
                   </label>
                   <input
@@ -215,13 +220,13 @@ export default function Contact() {
                     onChange={handleChange}
                     required
                     placeholder="What is this regarding?"
-                    className="w-full px-4 py-3.5 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all text-gray-900 placeholder-gray-400"
+                    className="w-full px-4 py-3.5 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all text-lg text-gray-900 placeholder-gray-400"
                   />
                 </div>
 
                 {/* Message Textarea */}
                 <div>
-                  <label htmlFor="message" className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label htmlFor="message" className="block text-lg font-semibold text-gray-700 mb-2">
                     Your Message *
                   </label>
                   <textarea
@@ -232,7 +237,7 @@ export default function Contact() {
                     required
                     rows="5"
                     placeholder="Tell us more about your inquiry..."
-                    className="w-full px-4 py-3.5 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all resize-none text-gray-900 placeholder-gray-400"
+                    className="w-full px-4 py-3.5 rounded-xl border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none transition-all resize-none text-lg text-gray-900 placeholder-gray-400"
                   ></textarea>
                 </div>
 
@@ -247,7 +252,7 @@ export default function Contact() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-orange-500 text-white py-4 rounded-xl font-semibold text-base hover:bg-orange-600 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="contact-submit-button w-full bg-orange-500 text-white py-4 rounded-xl font-semibold text-xl hover:bg-orange-600 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Send size={20} />
                   {loading ? "Sending..." : "Send Message"}
@@ -259,8 +264,8 @@ export default function Contact() {
             {/* Right Side - Map & Additional Info */}
             <div className="space-y-6">
               {/* Map Container */}
-              <div className="site-card site-card--panel overflow-hidden">
-                <div className="aspect-[4/3] bg-gradient-to-br from-orange-100 to-orange-50 flex items-center justify-center" style={{ padding: '32px' }}>
+              <div className="site-card site-card--panel overflow-hidden" style={{ minHeight: '620px' }}>
+                <div className="h-full min-h-[620px] bg-gradient-to-br from-orange-100 to-orange-50 flex items-center justify-center" style={{ padding: '56px' }}>
                   <div className="text-center">
                     <MapPin size={64} className="mx-auto mb-4 text-orange-500" />
                     <h3 className="text-2xl font-bold text-gray-900 mb-3" style={{ fontWeight: '700' }}>Visit Our Location</h3>
@@ -281,9 +286,9 @@ export default function Contact() {
               </div>
 
               {/* Quick Info Box */}
-              <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300" style={{ padding: '32px', paddingLeft: '28px', paddingRight: '28px' }}>
-                <h3 className="text-2xl font-bold mb-4 text-white" style={{ fontWeight: '700' }}>Why Choose Food Zone?</h3>
-                <ul className="space-y-3">
+              <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300" style={{ padding: '52px', paddingLeft: '48px', paddingRight: '48px' }}>
+                <h3 className="text-3xl font-bold mb-6 text-white" style={{ fontWeight: '700' }}>Why Choose Food Zone?</h3>
+                <ul className="space-y-5">
                   <li className="flex items-start gap-3">
                     <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                       <span className="text-xs text-white">✓</span>
@@ -327,18 +332,18 @@ export default function Contact() {
       {/* ═══════════════════════════════════════
           FAQ SECTION
       ═══════════════════════════════════════ */}
-      <section style={{ paddingBottom: '100px' }}>
+      <section style={{ paddingTop: '72px', paddingBottom: '100px' }}>
         <div className="section-container">
-          <div className="text-center mb-12">
-            <h2 className="section-title text-gray-900 mb-4">
+          <div className="text-center mb-12" style={{ marginTop: '16px', marginBottom: '56px' }}>
+            <h2 className="section-title text-gray-900" style={{ marginTop: '16px', marginBottom: '18px' }}>
               Frequently Asked <span className="text-orange-500">Questions</span>
             </h2>
-            <p className="section-subtitle">
+            <p className="section-subtitle" style={{ marginTop: '12px' }}>
               Quick answers to common questions about Food Zone
             </p>
           </div>
 
-          <div className="max-w-3xl mx-auto space-y-4">
+          <div className="faq-list max-w-3xl mx-auto space-y-4">
             {[
               {
                 q: "Do I need to make a reservation?",
@@ -361,12 +366,12 @@ export default function Contact() {
                 a: "Yes, we have private dining areas and event spaces available. Contact us to discuss your requirements and pricing."
               }
             ].map((faq, index) => (
-              <details key={index} className="site-card site-card--panel overflow-hidden group">
-                <summary className="font-semibold text-gray-900 cursor-pointer hover:bg-orange-50 transition-colors flex items-center justify-between" style={{ padding: '20px 24px', paddingLeft: '24px' }}>
+              <details key={index} className="faq-item site-card site-card--panel overflow-hidden group">
+                <summary className="font-semibold text-gray-900 cursor-pointer hover:bg-orange-50 transition-colors flex items-center justify-between" style={{ padding: '26px 32px' }}>
                   <span>{faq.q}</span>
                   <span className="text-orange-500 text-xl">+</span>
                 </summary>
-                <div className="text-gray-600 text-sm leading-relaxed" style={{ padding: '0 24px 20px 24px', paddingLeft: '24px' }}>
+                <div className="text-gray-600 text-sm leading-relaxed" style={{ padding: '0 32px 28px' }}>
                   {faq.a}
                 </div>
               </details>

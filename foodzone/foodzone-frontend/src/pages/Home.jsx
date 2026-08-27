@@ -430,7 +430,9 @@ export default function Home() {
             className="relative overflow-hidden text-center px-12 py-16 fade-up"
             style={{
               maxWidth: '900px',
-              margin: '0 auto',
+              margin: '24px auto',
+              paddingTop: '88px',
+              paddingBottom: '88px',
               background: 'linear-gradient(135deg, #F97316 0%, #EA580C 100%)',
               borderRadius: 'var(--card-radius)',
               boxShadow: '0 12px 32px rgba(249, 115, 22, 0.3)'
@@ -454,49 +456,46 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
                 <Link
                   to="/reservations"
+                  className="cta-vip-button cta-vip-primary"
                   style={{
                     backgroundColor: 'white',
                     color: '#F97316',
-                    padding: '16px 32px',
+                    padding: '22px 44px',
+                    minWidth: '210px',
+                    minHeight: '64px',
                     borderRadius: 'var(--button-radius)',
-                    fontWeight: '600',
+                    border: '1px solid #FDE68A',
+                    fontWeight: '700',
                     fontSize: '18px',
+                    letterSpacing: '0.02em',
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '8px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-                    transition: 'all 0.3s ease',
+                    boxShadow: '0 8px 20px rgba(124, 45, 18, 0.2)',
                     textDecoration: 'none'
                   }}
-                  onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-                  onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                 >
                   Make Reservation
                   <ArrowRight size={20} />
                 </Link>
                 <Link
                   to="/contact"
+                  className="cta-vip-button cta-vip-secondary"
                   style={{
                     backgroundColor: 'transparent',
                     color: 'white',
-                    padding: '16px 32px',
+                    padding: '22px 44px',
+                    minWidth: '170px',
+                    minHeight: '64px',
                     borderRadius: 'var(--button-radius)',
-                    border: '2px solid white',
-                    fontWeight: '600',
+                    border: '1px solid rgba(255, 255, 255, 0.9)',
+                    fontWeight: '700',
                     fontSize: '18px',
+                    letterSpacing: '0.02em',
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '8px',
-                    transition: 'all 0.3s ease',
                     textDecoration: 'none'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.transform = 'translateY(0)';
                   }}
                 >
                   Contact Us

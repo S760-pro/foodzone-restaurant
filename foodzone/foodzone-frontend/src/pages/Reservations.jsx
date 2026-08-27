@@ -16,9 +16,11 @@ import {
   User,
 } from "lucide-react";
 import { SiteCard, SiteCardsGrid, SiteStatCard } from "../components/SiteCard";
+import { bookingAPI } from "../services/api";
 
 export default function Reservations() {
-  const [submitted, setSubmitted] = useState(false);
+  const [submittedType, setSubmittedType] = useState("");
+  const [submitError, setSubmitError] = useState("");
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -45,7 +47,7 @@ export default function Reservations() {
   ];
 
   const inputClassName =
-    "w-full rounded-lg border-2 border-gray-200 bg-white px-5 py-3.5 text-sm text-slate-700 outline-none transition-all placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-100 hover:border-gray-300";
+    "w-full rounded-lg border-2 border-gray-200 bg-white px-5 py-3.5 text-base text-slate-700 outline-none transition-all placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-100 hover:border-gray-300";
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -57,67 +59,47 @@ export default function Reservations() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setSubmitted(false);
+    const reservationType = event.nativeEvent.submitter?.value;
+    setSubmittedType("");
+    setSubmitError("");
+
+    if (!localStorage.getItem("fz_token")) {
+      setSubmitError("Please login before making a reservation.");
+      return;
+    }
 
     try {
-      // Prepare booking data for table reservation
-      const tableBookingData = {
-        bookingType: "table",
-        partySize: parseInt(formData.tableGuests),
-        reservationTime: `${formData.tableDate}T${formData.tableTime}`,
-        specialRequests: `Table Preference: ${formData.tablePreference}. ${formData.tableRequests}`,
-        totalAmount: 0, // Free for table booking
-        phone: formData.phone,
-        fullName: formData.fullName,
-        email: formData.email
-      };
-
-      // Prepare booking data for room reservation
-      const roomBookingData = {
-        bookingType: "room",
-        checkIn: formData.checkInDate,
-        checkOut: formData.checkOutDate,
-        partySize: parseInt(formData.roomGuests),
-        specialRequests: `Room Type: ${formData.roomType}, Rooms: ${formData.roomCount}. ${formData.roomRequests}`,
-        totalAmount: 0, // Will be calculated based on room type
-        phone: formData.roomPhone
-      };
-
-      // Send requests to backend
-      const promises = [];
-      
-      if (formData.tableDate && formData.tableTime) {
-        promises.push(
-          fetch('http://localhost:5000/api/bookings', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem('fz_token')}`
-            },
-            body: JSON.stringify(tableBookingData)
-          })
-        );
+      if (reservationType === "table") {
+        if (!formData.fullName || !formData.phone || !formData.email || !formData.tableDate || !formData.tableTime) {
+          setSubmitError("Please complete the required table reservation fields.");
+          return;
+        }
+        await bookingAPI.create({
+          bookingType: "table",
+          partySize: parseInt(formData.tableGuests, 10),
+          reservationTime: new Date(`${formData.tableDate} ${formData.tableTime}`).toISOString(),
+          specialRequests: `Table Preference: ${formData.tablePreference}. ${formData.tableRequests}`,
+          totalAmount: 0,
+        });
+      } else {
+        if (!formData.checkInDate || !formData.checkOutDate || !formData.roomPhone) {
+          setSubmitError("Please complete the required room reservation fields.");
+          return;
+        }
+        await bookingAPI.create({
+          bookingType: "room",
+          checkIn: formData.checkInDate,
+          checkOut: formData.checkOutDate,
+          partySize: parseInt(formData.roomGuests, 10),
+          specialRequests: `Room Type: ${formData.roomType}, Rooms: ${formData.roomCount}. ${formData.roomRequests}`,
+          totalAmount: 0,
+        });
       }
 
-      if (formData.checkInDate && formData.checkOutDate) {
-        promises.push(
-          fetch('http://localhost:5000/api/bookings', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem('fz_token')}`
-            },
-            body: JSON.stringify(roomBookingData)
-          })
-        );
-      }
-
-      await Promise.all(promises);
-      
-      setSubmitted(true);
+      setSubmittedType(reservationType);
 
       setTimeout(() => {
-        setSubmitted(false);
+        setSubmittedType("");
         setFormData({
           fullName: "",
           email: "",
@@ -137,8 +119,7 @@ export default function Reservations() {
         });
       }, 3000);
     } catch (error) {
-      console.error('Booking error:', error);
-      alert('Booking failed. Please make sure you are logged in and try again.');
+      setSubmitError(error.message || "Booking failed. Please try again.");
     }
   };
 
@@ -163,7 +144,7 @@ export default function Reservations() {
           </p>
         </div>
 
-        <SiteCardsGrid columns={4} style={{ maxWidth: "1100px", margin: "28px auto 0" }}>
+        <SiteCardsGrid columns={4} className="reservation-stats-grid" style={{ maxWidth: "1100px", margin: "28px auto 0" }}>
           {stats.map((card) => {
             const toneMap = {
               "bg-blue-100 text-blue-600": "site-card-icon-wrap--blue",
@@ -174,6 +155,7 @@ export default function Reservations() {
             return (
               <SiteStatCard
                 key={card.label}
+                className="reservation-stat-card"
                 icon={card.icon}
                 iconWrapClass={toneMap[card.tone]}
                 value={card.value}
@@ -183,17 +165,19 @@ export default function Reservations() {
           })}
         </SiteCardsGrid>
 
-        {submitted ? (
+        {submittedType ? (
           <div className="mx-auto mb-16 max-w-2xl">
             <div className="site-card site-card--panel overflow-hidden">
               <div className="px-8 py-20 text-center">
                 <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100">
                   <CheckCircle2 size={40} className="text-emerald-600" />
                 </div>
-                <h3 className="mb-3 text-2xl font-bold text-charcoal-900">Reservation Confirmed!</h3>
-                <p className="mb-8 text-ink/60">We have received your request and will contact you shortly.</p>
+                <h3 className="mb-3 text-2xl font-bold text-charcoal-900">
+                  {submittedType === "table" ? "Table Reservation Confirmed!" : "Room Reservation Confirmed!"}
+                </h3>
+                <p className="mb-8 text-ink/60">Thank you. We received your reservation and will contact you shortly.</p>
                 <button
-                  onClick={() => setSubmitted(false)}
+                  onClick={() => setSubmittedType("")}
                   className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-gold-500 to-gold-600 px-6 py-3 font-semibold text-white transition-all hover:shadow-lg"
                 >
                   Make Another Reservation
@@ -204,21 +188,27 @@ export default function Reservations() {
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
-            <div className="mx-auto max-w-6xl">
-              <div className="grid gap-10 lg:grid-cols-2">
+            <div className="mx-auto max-w-[1400px]">
+              <div className="grid gap-12 lg:grid-cols-2">
                 {/* Table Reservation Card */}
-                <div className="site-card site-card--panel overflow-hidden" style={{ padding: 'clamp(28px, 8vw, 50px) clamp(20px, 8vw, 45px)', marginTop: '24px', marginBottom: '24px' }}>
-                  <div className="mb-10 flex items-center gap-4">
+                <div className="reservation-form-card site-card site-card--panel overflow-hidden" style={{ minHeight: '680px', padding: '40px 44px', margin: '40px 0', display: 'flex', flexDirection: 'column' }}>
+                  <div className="flex items-center gap-7" style={{ marginBottom: '32px', paddingBottom: '20px' }}>
                     <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-100 text-orange-500">
                       <UtensilsCrossed size={22} />
                     </div>
                     <div>
                       <h2 className="text-2xl font-bold text-charcoal-900">Table Reservation</h2>
-                      <p className="text-sm text-ink/55 mt-1">Reserve a table for dining and celebrations</p>
+                    {submitError && (
+                      <div className="mx-auto mb-6 max-w-2xl rounded-xl border border-red-200 bg-red-50 px-5 py-4 text-center font-semibold text-red-700" role="alert">
+                        {submitError}
+                      </div>
+                    )}
+
+                      <p className="text-sm text-ink/55 mt-3">Reserve a table for dining and celebrations</p>
                     </div>
                   </div>
 
-                  <div className="grid gap-6 sm:grid-cols-2">
+                  <div className="grid gap-8 sm:grid-cols-2">
                     <div>
                       <label className="mb-3 block text-sm font-semibold text-charcoal-900">Full Name *</label>
                       <input
@@ -345,9 +335,11 @@ export default function Reservations() {
                     </div>
                   </div>
 
-                  <div className="mt-10 pt-8 border-t border-gray-200">
+                  <div className="pt-8 border-t border-gray-200" style={{ marginTop: 'auto', minHeight: '82px' }}>
                     <button
                       type="submit"
+                      value="table"
+                      formNoValidate
                       className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-teal-500 to-cyan-600 text-base font-bold text-white transition-all duration-300 hover:from-teal-600 hover:to-cyan-700 hover:shadow-lg hover:-translate-y-1"
                       style={{ padding: '14px 24px' }}
                     >
@@ -358,18 +350,18 @@ export default function Reservations() {
                 </div>
 
                 {/* Room Reservation Card */}
-                <div className="site-card site-card--panel overflow-hidden" style={{ padding: 'clamp(28px, 8vw, 50px) clamp(20px, 8vw, 45px)', marginTop: '24px', marginBottom: '24px' }}>
-                  <div className="mb-10 flex items-center gap-4">
+                <div className="reservation-form-card site-card site-card--panel overflow-hidden" style={{ minHeight: '680px', padding: '40px 44px', margin: '40px 0', display: 'flex', flexDirection: 'column' }}>
+                  <div className="flex items-center gap-7" style={{ marginBottom: '32px', paddingBottom: '20px' }}>
                     <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-100 text-orange-500">
                       <BedDouble size={22} />
                     </div>
                     <div>
                       <h2 className="text-2xl font-bold text-charcoal-900">Room Reservation</h2>
-                      <p className="text-sm text-ink/55 mt-1">Reserve your stay with flexible room options</p>
+                      <p className="text-sm text-ink/55 mt-3">Reserve your stay with flexible room options</p>
                     </div>
                   </div>
 
-                  <div className="grid gap-6 sm:grid-cols-2">
+                  <div className="grid gap-8 sm:grid-cols-2">
                     <div>
                       <label className="mb-3 block text-sm font-semibold text-charcoal-900">Check-in Date</label>
                       <input
@@ -467,9 +459,11 @@ export default function Reservations() {
                     </div>
                   </div>
 
-                  <div className="mt-10 pt-8 border-t border-gray-200">
+                  <div className="pt-8 border-t border-gray-200" style={{ marginTop: 'auto', minHeight: '82px' }}>
                     <button
                       type="submit"
+                      value="room"
+                      formNoValidate
                       className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-teal-500 to-cyan-600 text-base font-bold text-white transition-all duration-300 hover:from-teal-600 hover:to-cyan-700 hover:shadow-lg hover:-translate-y-1"
                       style={{ padding: '14px 24px' }}
                     >
@@ -484,7 +478,7 @@ export default function Reservations() {
           </form>
         )}
 
-        <SiteCardsGrid columns={3} style={{ maxWidth: "1100px", margin: "40px auto 0" }}>
+        <SiteCardsGrid columns={3} className="reservation-feature-grid" style={{ maxWidth: "1100px", margin: "72px auto 72px" }}>
           {[
             { icon: CheckCircle2, title: "Instant Confirmation", desc: "Receive immediate confirmation for your booking" },
             { icon: Shield, title: "Flexible Cancellation", desc: "Cancel or modify your booking easily any time" },
